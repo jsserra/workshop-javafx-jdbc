@@ -18,5 +18,14 @@ public class Utils {
 		//4 depois chamo a função getWindow() para chamar a tela fazendo um downcast para Stage
 		return (Stage)((Node)event.getSource()).getScene().getWindow();
 	}
+	
+	//XI. Método criado para não precisar criar excessão toda vez que for transforma String p/ Inteiro 
+	public static Integer tryParseToInt(String str) {
+		try {
+		return Integer.parseInt(str);
+		}catch(NumberFormatException e) {
+			return null;
+		}
+	}
 
 }
