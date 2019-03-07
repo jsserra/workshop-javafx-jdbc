@@ -9,10 +9,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import model.entities.Department;
 
 public class DepartmentFormController implements Initializable {
 
-	//vamos ter que colocar a declaração dos componentes da tela do DepartmentForm.fxml que nesse caso são os 2x TextField, 1x label e 2x botões
+	private Department entity; //Agora nosso controlado tem uma instância do departamento e mais abaixo criei método setDepartment para inserir
+	
+	//IX. vamos ter que colocar a declaração dos componentes da tela do DepartmentForm.fxml que nesse caso são os 2x TextField, 1x label e 2x botões
 	
 	@FXML
 	private TextField txtId;
@@ -34,6 +37,10 @@ public class DepartmentFormController implements Initializable {
 		System.out.println("onBtSaveAction");			
 	}
 	
+	public void setDepartment(Department entity) {
+		this.entity = entity;		
+	}
+	
 	@FXML
 	private void onBtCancelAction() {
 		System.out.println("onBtCancelAction");
@@ -52,4 +59,12 @@ public class DepartmentFormController implements Initializable {
 		Constraints.setTextFieldMaxLength(txtName, 30);
 	}
 
+	//Esse método vai copular as caixas de texto txtId e txtName com os dados do objeto Department
+	public void updateFormData() {
+		if (entity == null) {
+			throw new IllegalStateException("Entity was null");
+		}
+		txtId.setText(String.valueOf(entity.getId()));
+		txtName.setText(entity.getName());
+	}
 }

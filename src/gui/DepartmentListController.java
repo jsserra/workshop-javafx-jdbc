@@ -47,7 +47,8 @@ public class DepartmentListController implements Initializable{
 	@FXML
 	public void onBtNewAction(ActionEvent event) {
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/DepartmentForm.fxml", parentStage);
+		Department obj = new Department();
+		createDialogForm(obj, "/gui/DepartmentForm.fxml", parentStage);
 	}
 	
 	public void setDepartmentService(DepartmentService service) {
@@ -85,7 +86,7 @@ public class DepartmentListController implements Initializable{
 	/* Nossa função pra carregar a janela do formulário para preencher novo departamento
 	 *Esse método vai receber como parâmetro Stage pq quando agente cria um tela de diálogo
 	 agente tem que informar que é o Stage (pai) que criou essa janela de diálogo*/
-	public void createDialogForm(String absoluteName, Stage parentStage) {
+	public void createDialogForm(Department obj, String absoluteName, Stage parentStage) {
 		try {
 			//vamos criar aqui nossa lógica para abrir a tela de formulário
 			// pra carregar uma tela precisamos do objeto da classe FXMLLoader
@@ -95,6 +96,11 @@ public class DepartmentListController implements Initializable{
 			//Agora, que vai entrar o stage, quando vou carregar uma janela de diálogo modal
 			//na frente de uma janela existente eu tenho que instanciar um novo stage, logo vai ser 
 			//um palco na frente do outro
+			
+			DepartmentFormController controller = loader.getController();
+			controller.setDepartment(obj);
+			controller.updateFormData();
+			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Enter Department Data");
 			dialogStage.setScene(new Scene(pane)); //Quem vai ser o elemento raiz dessa cena? R: Pane
