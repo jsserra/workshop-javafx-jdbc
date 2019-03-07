@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="236.0" prefWidth="308.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label graphicTextGap="5.0" prefHeight="43.0" prefWidth="95.0" text="About" textOverrun="WORD_ELLIPSIS" wrapText="true">
+         <padding>
+            <Insets bottom="10.0" left="20.0" top="10.0" />
+         </padding>
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label prefHeight="17.0" prefWidth="218.0" text="JavaFX workshop javafx jdbc" />
+   </children>
+</VBox>
