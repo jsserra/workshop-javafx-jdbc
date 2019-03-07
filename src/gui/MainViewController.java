@@ -3,6 +3,7 @@ package gui;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import application.Main;
 import gui.util.Alerts;
@@ -15,6 +16,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import model.services.DepartmentService;
 
 public class MainViewController implements Initializable {
 
@@ -35,14 +37,19 @@ public class MainViewController implements Initializable {
 		System.out.println("onMenuItemSeller");
 	}
 
-	@FXML
+	@FXML //É isso que aqui que vai abrir na tela, ou seja departmentList
 	public void onMenuItemDepartmentAction() {
-		loadView("/gui/DepartmentList.fxml");
+		loadView("/gui/DepartmentList.fxml", (DepartmentListController controller) -> {
+			controller.setDepartmentService(new DepartmentService());
+			controller.updateTableView();
+		}	);
 	}
 
 	@FXML
 	public void onMenuItemAboutAction() {
-		loadView("/gui/About.fxml");
+		loadView("/gui/About.fxml", x -> {}); 
+		//como tenho q passar inicialização e About não vai precisar carregar nada
+		// criei expressão que x leva a nada 
 	}
 
 	@Override
@@ -54,7 +61,7 @@ public class MainViewController implements Initializable {
 	// load = carga --> método para carregar um nova tela, vou passar como parâmetro o caminho
 	// completo gui\About.fxml
 	//synchronized --> como aplicações gráficas são multithred essa declaração não vai deixar que interrompa o processamento desse código durante o multithred
-	private synchronized void loadView(String absoluteName) {
+	private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
 		try {
 			// pra carregar uma tela precisamos do objeto da classe FXMLLoader
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));/* O getCalss é padrão da classe
@@ -70,6 +77,11 @@ public class MainViewController implements Initializable {
 			mainVBox.getChildren().clear();
 			mainVBox.getChildren().add(mainMenu);
 			mainVBox.getChildren().addAll(newVBox.getChildren());
+			
+			//Depois de carregar a janela, vou abaixo informar comando para ativar a função initializingAction,
+			//e as duas linhas abaixo vão executar a função passada como argumento
+			T controller = loader.getController(); //criei variável do tipo T que vai retornar qualquer tipo controller, ex.: DepartmentListController
+			initializingAction.accept(controller); //Executando a ação initializingAction, para isso tenho que chamar a função accept do meu Consumer
 			
 		} catch (IOException e) {
 			Alerts.showAlert("IOException", "Error loading view", e.getMessage(), AlertType.ERROR);
