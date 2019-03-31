@@ -3,7 +3,9 @@ package gui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbException;
 import gui.listeners.DataChangeListener;
@@ -18,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Department;
+import model.exceptions.ValidationException;
 import model.services.DepartmentService;
 
 public class DepartmentFormController implements Initializable {
@@ -58,7 +61,11 @@ public class DepartmentFormController implements Initializable {
 			service.saveOrUpdate(entity);
 			notifyDataChangeListeners();//XII. método que vai fazer a notificação
 			Utils.currentStage(event).close();
-		}catch (DbException e) {
+		}catch(ValidationException e) {
+			setErrorMessages(e.getErrors());
+		}
+		
+		catch (DbException e) {
 			Alerts.showAlert("Erros saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -72,9 +79,23 @@ public class DepartmentFormController implements Initializable {
 
 	private Department getFormData() {
 		Department obj = new Department();
+		//XIII Vamos instanciar a exceção personalizada ValidationException e para agilizar vamos só não permitir que campo name fique vazio
+		ValidationException exception = new ValidationException("Validation error");
+		
 		obj.setId(Utils.tryParseToInt(txtId.getText()));
+		
+		if(txtName.getText()==null || txtName.getText().trim().equals("")) { //trim é para eliminar qualquer conteúdo vazio
+			exception.addErrors("name", "Field can't be empty");
+		}
 		obj.setName(txtName.getText());
+		
+		//Aqui eu estou testando se na minha coleção de erro tem pelo menos um erro
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+		}
 		return obj;
+		
+		
 	}
 
 	public void setDepartment(Department entity) {
@@ -116,5 +137,14 @@ public class DepartmentFormController implements Initializable {
 		}
 		txtId.setText(String.valueOf(entity.getId()));
 		txtName.setText(entity.getName());
+	}
+	
+	//Esse método vai carregar os erros percorrendo minha coleção map, preenchendo minha caixa de texto (Label)
+	private void setErrorMessages(Map<String, String> errors) {
+		Set<String> fields = errors.keySet();
+		if(fields.contains("name")) {
+			labelErrorName.setText(errors.get("name"));
+		}
+		
 	}
 }
